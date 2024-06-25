@@ -26,6 +26,20 @@ public class ApiClient extends BaseSetupApi {
                 .response();
     }
 
+    public static OrderDto[] getOrdersAsArray(RequestSpecification authorizedSpecWithToken) {
+
+        return given()
+                .spec(authorizedSpecWithToken)
+                .log()
+                .all()
+                .get("orders")
+                .then()
+                .log()
+                .all()
+                .extract()
+                .as(OrderDto[].class);
+    }
+
     public static Response getOrdersById(RequestSpecification authorizedSpecWithToken, String orderId) {
 
         return given()
@@ -42,7 +56,10 @@ public class ApiClient extends BaseSetupApi {
 
     public static Response createOrder(RequestSpecification spec) {
         Gson gson = new Gson();
-        OrderDto requestOrder = new OrderDto("Yura", "111222", "not comment");
+        OrderDto requestOrder = new OrderDto();
+        requestOrder.setComment(TestDataGenerator.generateRandomComment());
+        requestOrder.setCustomerName(TestDataGenerator.generateRandomCustomerName());
+        requestOrder.setCustomerPhone(TestDataGenerator.generateRandomCustomerPhone());
 
         return given()
                 .spec(spec)
